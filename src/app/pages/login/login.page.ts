@@ -48,6 +48,8 @@ export class LoginPage implements OnInit {
 
               this.loadingController.dismiss();
               this.router.navigate(['/home']);
+
+              this.username = this.password = '';
             })
             .catch((err) => {
               console.log(err);

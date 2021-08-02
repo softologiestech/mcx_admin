@@ -16,7 +16,11 @@ export class AppComponent {
     private router: Router,
     private menuController: MenuController
   ) {
-    console.log(this.type);
+    // console.log(this.type);
+
+    setInterval(() => {
+      this.type = localStorage.getItem('type');
+    }, 500);
   }
 
   logout() {

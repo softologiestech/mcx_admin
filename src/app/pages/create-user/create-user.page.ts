@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
-import { ActionSheetController } from '@ionic/angular';
+import { ActionSheetController, LoadingController } from '@ionic/angular';
 import * as firebase from 'firebase';
 import { UploadService } from 'src/app/services/upload.service';
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-create-user',
@@ -25,18 +26,32 @@ export class CreateUserPage implements OnInit {
   aadharUrl: string = '';
   pan: string = '';
   panUrl: string = '';
+  aluminium: number;
+  copper: number;
+  crudeoil: number;
+  gold: number;
+  goldm: number;
+  lead: number;
+  nickel: number;
+  nse: number;
+  silver: number;
+  silverm: number;
+  zinc: number;
 
   constructor(
     private auth: AngularFireAuth,
     private db: AngularFirestore,
     private router: Router,
     private uploadService: UploadService,
-    private actionSheetController: ActionSheetController
+    private actionSheetController: ActionSheetController,
+    private loadingController: LoadingController
   ) {}
 
   ngOnInit() {}
 
   create() {
+    this.presentLoading();
+
     if (this.aadhar)
       this.uploadService.uploadAadhar(this.aadhar).then((data) => {
         // console.log(data)
@@ -67,6 +82,7 @@ export class CreateUserPage implements OnInit {
             password: this.password,
             id: this.id,
             type: 'user',
+            net_commission: 0,
             uid: data.user.uid,
             createdAt: Date.now(),
             createdBy: localStorage.getItem('uid'),
@@ -82,6 +98,7 @@ export class CreateUserPage implements OnInit {
                   id: this.id,
                   name: this.name,
                   username: this.username,
+                  password: this.password,
                   createdAt: Date.now(),
                 });
             else
@@ -93,10 +110,32 @@ export class CreateUserPage implements OnInit {
                   id: this.id,
                   name: this.name,
                   username: this.username,
+                  password: this.password,
                   createdAt: Date.now(),
                 });
 
+            this.db
+              .doc(`user/${this.id}`)
+              .collection('margin')
+              .doc(uuidv4())
+              .set({
+                ALUMINIUM: this.aluminium,
+                COPPER: this.copper,
+                CRUDEOIL: this.crudeoil,
+                GOLD: this.gold,
+                GOLDM: this.goldm,
+                LEAD: this.lead,
+                NICKEL: this.nickel,
+                NSE: this.nse,
+                SILVER: this.silver,
+                SILVERM: this.silverm,
+              });
+
             this.router.navigate(['/home']);
+          })
+          .catch((err) => {
+            // console.log(err)
+            this.loadingController.dismiss();
           });
       });
   }
@@ -163,5 +202,13 @@ export class CreateUserPage implements OnInit {
     });
 
     await actionSheet.present();
+  }
+
+  async presentLoading() {
+    const loading = await this.loadingController.create({
+      message: 'Creating User ...',
+      spinner: 'crescent',
+    });
+    await loading.present();
   }
 }
