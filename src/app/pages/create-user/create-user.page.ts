@@ -26,6 +26,7 @@ export class CreateUserPage implements OnInit {
   aadharUrl: string = '';
   pan: string = '';
   panUrl: string = '';
+
   aluminium: number;
   copper: number;
   crudeoil: number;
@@ -47,7 +48,15 @@ export class CreateUserPage implements OnInit {
     private loadingController: LoadingController
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    if (this.type === 'manager' || this.type === 'sub_admin')
+      this.db
+        .doc(`${this.type}/${this.id}`)
+        .valueChanges()
+        .subscribe((doc) => {
+          console.log(doc);
+        });
+  }
 
   create() {
     this.presentLoading();
