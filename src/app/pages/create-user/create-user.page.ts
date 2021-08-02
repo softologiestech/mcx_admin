@@ -131,6 +131,7 @@ export class CreateUserPage implements OnInit {
                 SILVERM: this.silverm,
               });
 
+            this.loadingController.dismiss();
             this.router.navigate(['/home']);
           })
           .catch((err) => {
