@@ -38,7 +38,7 @@ export class AddComponent implements OnInit {
             amountInWallet: this.amount,
             equity: this.amount,
             free_margin: this.amount,
-            margin: 0
+            margin: 0,
           });
         else {
           var prevAmount = this.data.amountInWallet;
@@ -71,11 +71,15 @@ export class AddComponent implements OnInit {
       })
       .then(() => {
         var prevAmount = this.data.amountInWallet;
+        var prevEquity: number = this.data.equity;
+        var prevFreeMargin: number = this.data.free_margin;
 
         if (this.data.amountInWallet === 0) return;
         else if (this.amount < prevAmount) {
           this.db.doc(`user/${this.data.id}`).update({
             amountInWallet: prevAmount - this.amount,
+            equity: prevEquity - this.amount,
+            free_margin: prevFreeMargin - this.amount,
           });
         }
 
